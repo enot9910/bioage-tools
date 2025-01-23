@@ -62,4 +62,5 @@ class AccModel:
                       head_width=0.2, head_length=0.3, fc='k', ec='k')
             plt.scatter(np.array(ages)[i], yp[i], color=colors[j])
             plt.scatter(np.array(ages)[i], yl[i], color=colors[j])
-        plt.show()
+        plt.xlabel('Age, years')
+        plt.ylabel('Bioage, years')
