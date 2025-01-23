@@ -108,6 +108,15 @@ class AccMasker(Masker):
                 age, self.ages_sorted, self.max_num_closest_samples
             )
             mask_age = (min_age < self.ages) & (self.ages < max_age)
+            if self.verbose:
+                print('Age', age)
+                print(f'Best interval: cage min {min_age} -> cage max = {max_age}')
+                print('Mean cage:', self.predicted_ages[mask_age].mean())
+                print('Mean age:', self.ages[mask_age].mean())
+                print('Min age:', self.ages[mask_age].min())
+                print('Max age:', self.ages[mask_age].max())
+                print('Num samples:', len(self.ages[mask_age]))
+    
         
         if self.algo == 'age_vs_cages':
             min_age, max_age = self.find_best_age_range(
