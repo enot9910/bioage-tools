@@ -11,7 +11,7 @@ class AnyModel(metaclass=ABCMeta):
 class AccModel:
     def __init__(
         self, bioage_model:AnyModel,
-        need_fit=True, bias_correction=False
+        need_fit=False, bias_correction=False
     ):
         self.model = bioage_model
         self.linreg_model = None
