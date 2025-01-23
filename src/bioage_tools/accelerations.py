@@ -45,7 +45,7 @@ class AccModel:
     def __str__(self):
         return str(self.model) + ('\n' + str(self.corrector) if hasattr(self, 'corrector') else '')
 
-    def plot_predict(self, X, ages):
+    def plot_predict(self, X, ages, seed=42):
         yp = self.predict(X)
         yl = self.linreg_model.predict(ages.values.reshape(-1, 1))
         
@@ -55,6 +55,7 @@ class AccModel:
         plt.plot(ages, ages, color='gray')
         colors = colors = ['blue', 'green', 'orange', 'purple', 'brown', 'pink', 'gray', 'olive', 'cyan', 'magenta',
                            'gold', 'indigo', 'maroon', 'navy', 'teal']
+        np.random.seed(seed)
         for j in range(15):
             i = np.random.choice(len(ages))
             plt.arrow(np.array(ages)[i], yp[i], 0, -yp[i]+yl[i],
