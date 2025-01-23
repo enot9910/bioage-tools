@@ -127,3 +127,9 @@ dmypy.json
 *.ckpt
 *.sav
 lightning_logs
+
+# Automatically created version file
+_version.py
+
+# Venv
+venv*/
