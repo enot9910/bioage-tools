@@ -137,7 +137,11 @@ class AccMasker(Masker):
 
         num_samples = mask_age.sum()
         # print('Num samples', num_samples)
-        assert num_samples >= self.min_num_closest_samples
+        if num_samples < self.min_num_closest_samples:
+            raise ValueError(
+                f'Not enough samples for age: {age:0.1f} years. ' + 
+                f'Found only {num_samples} in {min_age:0.1f} to {max_age:0.1f} years'
+            )
         masker = Independent(self.X[mask_age], max_samples=num_samples)
         res = masker(mask, x)
 
