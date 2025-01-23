@@ -25,7 +25,8 @@ dependencies = [
     "pandas",
     "matplotlib>=3.6.2",
     "scikit-learn",
-    "regression-bias-corrector"
+    "regression-bias-corrector",
+    "shap"
 ]
 
 [project.urls]
