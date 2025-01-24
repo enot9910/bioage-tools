@@ -8,11 +8,14 @@ A bunch of handy tools for biological age analysis:
 
 
 ### Install
-pip install -e .
+
+```bash
+pip install .
+```
 
 ### How to use
 
-[TODO]
+See `examples/acc_explainer.ipynb`.
 
 ## Authors
 
