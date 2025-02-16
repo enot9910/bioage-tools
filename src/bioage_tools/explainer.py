@@ -14,6 +14,8 @@ class AccMasker(Masker):
         min_num_closest_samples=5, 
         verbose=False
     ):
+        if X is None and acc_model is None:
+            return
         self.ages = X[age_column]
         self.ages_sorted = self.ages.sort_values().values
 
