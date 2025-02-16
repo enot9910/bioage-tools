@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from shap import Explainer
 from shap.maskers import Independent, Masker
+from shap._serializable import Deserializer, Serializer
 
 class AccMasker(Masker):
     def __init__(
@@ -163,6 +164,60 @@ class AccMasker(Masker):
         )
 
         return (res[0][0], ages), res[1]
+    
+    def save(self, out_file):
+        """Write a AccMakser to a file stream."""
+        
+        # Increment the version number when the encoding changes!
+        with Serializer(out_file, "bioage_tools.AccMasker", version=0) as s:
+            s.save("ages", self.ages)
+            s.save("ages_sorted", self.ages_sorted)
+            s.save("X", self.X)
+            s.save("predicted_ages", self.predicted_ages)
+            s.save("predicted_ages_sorted", self.predicted_ages_sorted)
+            s.save("accelerations", self.accelerations)
+            s.save("age_acc", self.age_acc)
+            s.save("age_sorted_acc", self.age_sorted_acc)
+            # s.save("age_column", self.age_column)
+            s.save("delta_age", self.delta_age)
+            s.save("max_num_closest_samples", self.max_num_closest_samples)
+            s.save("min_num_closest_samples", self.min_num_closest_samples)
+            s.save("shape", self.shape)
+            s.save("feature_names", self.feature_names)
+            s.save("supports_delta_masking", self.supports_delta_masking)
+            s.save("verbose", self.verbose)
+            s.save("algo", self.algo)
+            
+    @classmethod
+    def load(cls, in_file, instantiate=True):
+        """Load a AccMakser from a file stream."""
+        if not instantiate:
+            raise NotImplementedError()
+        
+        obj_data = super().load(in_file, instantiate=False)
+        with Deserializer(in_file, "bioage_tools.AccMasker", min_version=0, max_version=0) as s:
+            obj_data["ages"] = s.load("ages")
+            obj_data["ages_sorted"] = s.load("ages_sorted")
+            obj_data["X"] = s.load("X")
+            obj_data["predicted_ages"] = s.load("predicted_ages")
+            obj_data["predicted_ages_sorted"] = s.load("predicted_ages_sorted")
+            obj_data["accelerations"] = s.load("accelerations")
+            obj_data["age_acc"] = s.load("age_acc")
+            obj_data["age_sorted_acc"] = s.load("age_sorted_acc")
+            obj_data["delta_age"] = s.load("delta_age")
+            obj_data["max_num_closest_samples"] = s.load("max_num_closest_samples")
+            obj_data["min_num_closest_samples"] = s.load("min_num_closest_samples")
+            obj_data["shape"] = s.load("shape")
+            obj_data["feature_names"] = s.load("feature_names")
+            obj_data["supports_delta_masking"] = s.load("supports_delta_masking")
+            obj_data["verbose"] = s.load("verbose")
+            obj_data["algo"] = s.load("algo")
+        obj = cls(None, None)
+        for key in obj_data:
+            setattr(obj, key, obj_data[key])
+        return obj
+    
+
 
 class AccModelExplainer(AccModel):
     def make_shap_explainer_acc(
