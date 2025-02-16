@@ -34,7 +34,6 @@ class AccMasker(Masker):
         )
         self.age_sorted_acc = self.age_acc.sort_values(by="age")
 
-        self.age_column = age_column
         self.delta_age = delta_age
         self.max_num_closest_samples = max_num_closest_samples
         self.min_num_closest_samples = min_num_closest_samples
