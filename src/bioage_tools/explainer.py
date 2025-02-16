@@ -35,12 +35,14 @@ class AccMasker(Masker):
         self.delta_age = delta_age
         self.max_num_closest_samples = max_num_closest_samples
         self.min_num_closest_samples = min_num_closest_samples
+        
+        ########## These lines are used by SHAP ##########
         self.shape = self.X.shape
-        self.acc_model = acc_model
         self.feature_names = self.X.columns
         self.supports_delta_masking = True
-        self.verbose = verbose
+        ########## These lines are used by SHAP ##########
         
+        self.verbose = verbose
         self.algo = algo
 
     def mask_shapes(self, *args):
