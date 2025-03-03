@@ -2,6 +2,7 @@ from abc import ABCMeta, abstractmethod
 from regression_bias_corrector.linear_corrector import LinearBiasCorrector
 from sklearn.linear_model import LinearRegression
 import numpy as np
+import pandas as pd
 
 class AnyModel(metaclass=ABCMeta):
     @abstractmethod
@@ -21,7 +22,13 @@ class AccModel:
         if self.bias_correction:
             self.corrector = LinearBiasCorrector()
 
-    def fit(self, X, ages):
+    def _prepare_data(self, X:pd.DataFrame, ages:pd.Series):
+        if type(X) is pd.DataFrame and type(ages) is pd.Series:
+            ages = ages[X.index]
+        return X, ages
+    
+    def fit(self, X:pd.DataFrame, ages:pd.Series):
+        X, ages = self._prepare_data(X, ages)
         if self.need_fit:
             self.model.fit(X, ages)
         bioages = self.model.predict(X)
@@ -31,13 +38,14 @@ class AccModel:
         self.linreg_model = LinearRegression().fit(ages.values.reshape(-1, 1), bioages)
         return self
 
-    def predict(self, X):
+    def predict(self, X:pd.DataFrame):
         bioages = self.model.predict(X)
         if self.bias_correction:
             bioages = self.corrector.predict(bioages)
         return bioages
 
-    def predictacc(self, X, ages):
+    def predictacc(self, X:pd.DataFrame, ages:pd.Series):
+        X, ages = self._prepare_data(X, ages)
         bioages = self.predict(X)
         acc = bioages - self.linreg_model.predict(ages.values.reshape(-1, 1))
         return acc
@@ -45,7 +53,8 @@ class AccModel:
     def __str__(self):
         return str(self.model) + ('\n' + str(self.corrector) if hasattr(self, 'corrector') else '')
 
-    def plot_predict(self, X, ages, seed=42):
+    def plot_predict(self, X:pd.DataFrame, ages:pd.Series, seed=42):
+        X, ages = self._prepare_data(X, ages)
         yp = self.predict(X)
         yl = self.linreg_model.predict(ages.values.reshape(-1, 1))
         
