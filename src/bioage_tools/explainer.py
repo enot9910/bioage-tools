@@ -99,7 +99,7 @@ class AccMasker(Masker):
         # print('Mean acc:', accs[l:r].mean())
         return min_age, max_age
 
-    def __call__(self, mask, x, age):
+    def __call__(self, mask, x, age: np.ndarray):
         age = age.item()
         # mask_age = (age - self.delta_age < self.ages) & \
         #     (self.ages < age + self.delta_age)
