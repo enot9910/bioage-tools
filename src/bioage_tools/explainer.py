@@ -55,7 +55,7 @@ class AccMasker(Masker):
 
     def find_best_age_range(self, age, age_sorted, min_samples=250):
         ages = age_sorted
-        pos = np.searchsorted(ages, age)
+        pos = min(len(ages) - 1, np.searchsorted(ages, age))
         l = pos
         r = pos + 1
         cm = ages[pos]
