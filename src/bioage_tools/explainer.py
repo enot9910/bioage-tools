@@ -151,7 +151,7 @@ class AccMasker(Masker):
                     f'Found only {num_samples} in {min_age:0.1f} to {max_age:0.1f} years'
                 )
             self.last_age = age
-            data_masker = pd.DataFrame([x])
+            data_masker = pd.DataFrame([x], columns=self.X.columns)
             age_masker = age
             num_samples = 1
         else:
