@@ -4,6 +4,7 @@ import numpy as np
 from shap import Explainer
 from shap.maskers import Independent, Masker
 from shap._serializable import Deserializer, Serializer
+import warnings
 
 class AccMasker(Masker):
     def __init__(
@@ -46,6 +47,8 @@ class AccMasker(Masker):
         
         self.verbose = verbose
         self.algo = algo
+        
+        self.last_age = 0
 
     def mask_shapes(self, *args):
         return [self.X.shape[1:2], [0]]
@@ -142,24 +145,27 @@ class AccMasker(Masker):
         num_samples = mask_age.sum()
         # print('Num samples', num_samples)
         if num_samples < self.min_num_closest_samples:
-            raise ValueError(
-                f'Not enough samples for age: {age:0.1f} years. ' + 
-                f'Found only {num_samples} in {min_age:0.1f} to {max_age:0.1f} years'
-            )
-        masker = Independent(self.X[mask_age], max_samples=num_samples)
+            if self.last_age != age:
+                warnings.warn(
+                    f'Not enough samples for age: {age:0.1f} years. ' + 
+                    f'Found only {num_samples} in {min_age:0.1f} to {max_age:0.1f} years'
+                )
+            self.last_age = age
+            data_masker = pd.DataFrame([x])
+            age_masker = age
+            num_samples = 1
+        else:
+            data_masker = self.X[mask_age]
+            age_masker = np.mean(self.ages[mask_age])
+            
+        masker = Independent(data_masker, max_samples=num_samples)
         res = masker(mask, x)
 
         num_all_masks = res[0][0].shape[0]
         num_masks = num_all_masks // num_samples
         assert num_masks * num_samples == num_all_masks
-
-        # Both ages and avg ages produces same results in shap values
-        ages = pd.concat(
-            [self.ages[mask_age]] * num_masks, 
-            ignore_index=True
-        )
         ages = pd.DataFrame(
-            [np.mean(self.ages[mask_age])] * num_all_masks
+            [age_masker] * num_all_masks
         )
 
         return (res[0][0], ages), res[1]
@@ -211,6 +217,7 @@ class AccMasker(Masker):
             obj_data["supports_delta_masking"] = s.load("supports_delta_masking")
             obj_data["verbose"] = s.load("verbose")
             obj_data["algo"] = s.load("algo")
+            obj_data["last_age"] = 0
         obj = cls(None, None)
         for key in obj_data:
             setattr(obj, key, obj_data[key])
