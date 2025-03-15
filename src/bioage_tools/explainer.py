@@ -61,14 +61,16 @@ class AccMasker(Masker):
         cm = ages[pos]
         cms = []
         for i in range(min_samples):
-            if cm / (r - l) >= age and l > 0:
-                l -= 1
-                cms += [ages[l]]
-                cm += ages[l]
-            elif r < len(ages):
-                cm += ages[r]
-                cms += [ages[r]]
-                r += 1
+            if cm / (r - l) >= age:
+                if l > 0:
+                    l -= 1
+                    cms += [ages[l]]
+                    cm += ages[l]
+            else:
+                if r < len(ages):
+                    cm += ages[r]
+                    cms += [ages[r]]
+                    r += 1
 
         min_age = ages[l]
         max_age = ages[r - 1]
