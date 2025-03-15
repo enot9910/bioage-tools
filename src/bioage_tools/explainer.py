@@ -157,7 +157,6 @@ class AccMasker(Masker):
         else:
             data_masker = self.X[mask_age]
             age_masker = np.mean(self.ages[mask_age])
-            
         masker = Independent(data_masker, max_samples=num_samples)
         res = masker(mask, x)
 
@@ -167,7 +166,6 @@ class AccMasker(Masker):
         ages = pd.DataFrame(
             [age_masker] * num_all_masks
         )
-
         return (res[0][0], ages), res[1]
     
     def save(self, out_file):
@@ -252,7 +250,8 @@ class AccModelExplainer(AccModel):
             acc_predictor,
             acc_masker,
             algorithm=algorithm,
-            seed=seed
+            seed=seed,
+            linearize_link=False # Disable linearize_link: nothing change for normal use. Helps in case of age out of range for non UB.
         )
 
         return self.acc_explainer
