@@ -226,11 +226,16 @@ class AccMasker(Masker):
 
 
 class AccModelExplainer(AccModel):
+    def _calculate_max_evals(self, X, age_column='age'):
+        n_features = len([col for col in X.columns if col != age_column])
+        return 2 * n_features + 1
+    
     def make_shap_explainer_acc(
         self, X:pd.DataFrame, 
         algorithm="permutation",
         seed=42,
         age_column='age', 
+        max_evals=None,
         acc_masker_config={
             "delta_age": 5, 
             "algo": 'age_vs_ages', 
@@ -248,19 +253,25 @@ class AccModelExplainer(AccModel):
             return acc
         
         acc_masker = AccMasker(X, acc_model=self, age_column=age_column, **acc_masker_config)
+        
+        max_evals = self._calculate_max_evals(X, age_column) if max_evals is None else max_evals
         self.acc_explainer = Explainer(
             acc_predictor,
             acc_masker,
             algorithm=algorithm,
             seed=seed,
+            max_evals=max_evals,
             linearize_link=False # Disable linearize_link: nothing change for normal use. Helps in case of age out of range for non UB.
         )
 
         return self.acc_explainer
 
-    def make_shap_explainer(self, X, max_samples=100):
+    def make_shap_explainer(self, X, max_samples=100, max_evals=None):
+        max_evals = self._calculate_max_evals(X, age_column='') if max_evals is None else max_evals
+
         self.explainer = Explainer(
             self.predict,
             Independent(X, max_samples=max_samples),
+            max_evals=max_evals,
         )
         return self.explainer
