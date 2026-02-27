@@ -226,7 +226,7 @@ class AccMasker(Masker):
 
 
 class AccModelExplainer(AccModel):
-    def _calculate_max_evals(self, X, age_column='age'):
+    def _calculate_max_evals(self, X:pd.DataFrame, age_column='age'):
         n_features = len([col for col in X.columns if col != age_column])
         return 2 * n_features + 1
     
