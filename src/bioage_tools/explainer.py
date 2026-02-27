@@ -267,7 +267,7 @@ class AccModelExplainer(AccModel):
         return self.acc_explainer
 
     def make_shap_explainer(self, X, max_samples=100, max_evals=None):
-        max_evals = self._calculate_max_evals(X, age_column='') if max_evals is None else max_evals
+        max_evals = self._calculate_max_evals(X, age_column=None) if max_evals is None else max_evals
 
         self.explainer = Explainer(
             self.predict,
